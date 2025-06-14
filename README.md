@@ -15,7 +15,6 @@ classDiagram
         + mejor_global_encontrado()
     }
     class Particle {
-        <<Particle>>
         - list posicion
         - list velocidad
         - list limites
