@@ -36,51 +36,49 @@ class Particle:
         self.velocidad = nueva_velocidad
 
 class Swarm:
-    def __init__(self, enjambre: list[Particle]): 
+    def __init__(self, enjambre: list[Particle], coeficiente_inercia = 0.7, parametro_cognitivo =2, parametro_social = 2): 
         self.enjambre = enjambre
         self.mejor_pos_global = []
         self.mejor_val_global = float('inf')
+        self.coeficiente_inercia = coeficiente_inercia
+        self.parametro_cognitivo = parametro_cognitivo
+        self.parametro_social = parametro_social
 
+    def cambiar_velocidades(self):
+        for particula in self.enjambre:
+            particula.cambiar_velocidad(self.coeficiente_inercia, self.parametro_cognitivo, self.parametro_social, self.mejor_pos_global)
+            particula.mover()
+    
     def buscar_mejor_global(self, funcion):
         for particula in self.enjambre:
             if particula.buscar_mejor_local(funcion)[1] < self.mejor_val_global:
                 self.mejor_val_global = particula.buscar_mejor_local(funcion)[1]
                 self.mejor_pos_global = particula.buscar_mejor_local(funcion)[0].copy()
+                
+    def mostrar_enjambre(self, funcion, num_iteraciones:int, num_graficas:int):
+        for i in range(num_iteraciones + 1):
+            self.buscar_mejor_global(funcion)
+            if i in [(num_iteraciones//num_graficas)*i for i in range(num_graficas + 1)]:
+                for particula in self.enjambre:
+                    pyplot.plot(*particula.posicion, "o")
+                    pyplot.title(f"Iteracion {i}")
+                pyplot.show()
+            prueba.cambiar_velocidades()
 
-    def cambiar_velocidades(self, coeficiente_inercia = 0.7, parametro_cognitivo =2, parametro_social = 2):
-        for particula in self.enjambre:
-            particula.cambiar_velocidad(coeficiente_inercia, parametro_cognitivo, parametro_social, self.mejor_pos_global)
-            particula.mover()
-            
-    def mejor_global_encontrado(self):
-        return self.mejor_val_global, self.mejor_pos_global
-        
-
+def goldstein_price(x, y):
+    term1 = 1 + (x + y + 1)**2 * (19 - 14*x + 3*x**2 - 14*y + 6*x*y + 3*y**2)
+    term2 = 30 + (2*x - 3*y)**2 * (18 - 32*x + 12*x**2 + 48*y - 36*x*y + 27*y**2)
+    return term1 * term2
+    
 if __name__ == "__main__":
-    def goldstein_price(x, y):
-        term1 = 1 + (x + y + 1)**2 * (19 - 14*x + 3*x**2 - 14*y + 6*x*y + 3*y**2)
-        term2 = 30 + (2*x - 3*y)**2 * (18 - 32*x + 12*x**2 + 48*y - 36*x*y + 27*y**2)
-        return term1 * term2
-
     enjambre = []
     for i in range(20):
-        posicion_prueba = [uniform(-2.0, 2.0), uniform(-2.0, 2.0)]
         limites_prueba = (-2,2)
+        posicion_prueba = [uniform(-2.0, 2.0), uniform(-2.0, 2.0)]
         particula = Particle(posicion_prueba, goldstein_price, limites_prueba)
         enjambre.append(particula)
 
     prueba = Swarm(enjambre)
-    
-    for i in range(201):
-        prueba.buscar_mejor_global(goldstein_price)
-        if i in [25, 50, 150, 200]:
-            for particula in prueba.enjambre: 
-                pyplot.plot(*particula.posicion, "o")  
-                pyplot.title(f"Iteracion {i}") 
-            pyplot.show()
-        prueba.cambiar_velocidades()
-
-    mejor_val_global = prueba.mejor_global_encontrado()[0]
-    mejor_pos_global = prueba.mejor_global_encontrado()[1]
-    print(f"Optimizacion: {mejor_val_global:.3f},\nPosicion:", end=" ")
-    print([f"{i:.3f}" for i in mejor_pos_global])
+    prueba.mostrar_enjambre(goldstein_price, 200, 4)
+    print(f"Optimizacion: {prueba.mejor_val_global:.3f},\nPosicion:", end=" ")
+    print([f"{i:.3f}" for i in prueba.mejor_pos_global])
