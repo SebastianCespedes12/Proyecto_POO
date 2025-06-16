@@ -6,28 +6,28 @@ Alternativa 3
 ```mermaid
 classDiagram
     class Swarm {
-        - list~Particle~ enjambre
-        - list mejor_pos_global
-        - float mejor_val_global
-        - float coeficiente_inercia
-        - float parametro_cognitivo
-        - float parametro_social
-        + __init__(enjambre, coeficiente_inercia, parametro_cognitivo, parametro_social)
+        - enjambre: list~Particle~
+        - mejor_pos_global: list
+        - mejor_val_global: float
+        - coeficiente_inercia: float
+        - parametro_cognitivo: float
+        - parametro_social: float
         + cambiar_velocidades()
         + buscar_mejor_global(funcion)
         + mostrar_enjambre(funcion, num_iteraciones, num_graficas)
     }
+    
     class Particle {
-        - list posicion
-        - list velocidad
-        - tuple limites
-        - list mejor_pos_local
-        - float mejor_val_local
-        + __init__(posicion, funcion, limites)
+        - posicion: list
+        - velocidad: list
+        - limites: tuple
+        - mejor_pos_local: list
+        - mejor_val_local: float
         + mover()
         + buscar_mejor_local(funcion)
         + cambiar_velocidad(coeficiente_inercia, parametro_cognitivo, parametro_social, mejor_pos_global)
     }
+    
     Swarm --* Particle
 ```
 
