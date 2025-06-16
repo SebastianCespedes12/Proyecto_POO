@@ -56,23 +56,38 @@ Swarm:
 Representa el enjambre completo, es decir, el conjunto de partículas.
 
 Atributos:
+
 enjambre: lista de partículas.
+
 mejor_pos_global: mejor posición encontrada por cualquier partícula.
+
 mejor_val_global: valor de la función objetivo en la mejor posición global.
+
 Parámetros del algoritmo: coeficiente de inercia, cognitivo y social.
+
+
 Métodos:
+
 cambiar_velocidades(): actualiza la velocidad y posición de todas las partículas.
+
 buscar_mejor_global(funcion): busca la mejor posición global entre todas las partículas.
+
 mostrar_enjambre(funcion, num_iteraciones, num_graficas): ejecuta el proceso de optimización, mostrando gráficamente la posición de las partículas en ciertas iteraciones.
 
 Función objetivo:
 En este caso, goldstein_price(x, y): es la función matemática que el enjambre intenta minimizar a manera de prueba :)
 
 Ejecución principal:
+
 Se crea un enjambre de 20 partículas con posiciones aleatorias dentro de los límites [-2, 2].
+
 Se instancia la clase Swarm con estas partículas.
+
 Se ejecuta el método mostrar_enjambre para optimizar la función durante 200 iteraciones y mostrar el progreso en 4 gráficos.
+
 Al final, se imprime el mejor valor encontrado y la posición correspondiente.
+
+
 
 Otra manera de ver esto, fuera del código es entender los siguientes 4 pasos:
 
