@@ -55,7 +55,7 @@ La función objetivo:
 4) El enjambre:
   El grupo completo de partículas se llama “enjambre”. El enjambre se mueve durante varias rondas, y en cada ronda todas las partículas actualizan su posición y velocidad, y se revisa si alguna encontró un lugar mejor.
 
-Ahora, la manera en la que esto sucede en el código es:
+Ahora, la manera en la que esto sucede en el código es:3
 
 ---
 
