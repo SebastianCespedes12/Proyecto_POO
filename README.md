@@ -30,19 +30,15 @@ classDiagram
     
     Swarm --* Particle
 ```
+El algoritmo de optimización por enjambre de partículas (PSO),  es una técnica inspirada en el comportamiento colectivo de animales como aves o peces para encontrar soluciones óptimas en problemas complejos.
 
-Utilizando las siguientes formulas:
-[![Captura-de-pantalla-2025-06-13-170914.png](https://i.postimg.cc/4yBPmcxx/Captura-de-pantalla-2025-06-13-170914.png)](https://postimg.cc/T55gspbz)
-
-El código implementa el algoritmo de optimización por enjambre de partículas (PSO), que es una técnica inspirada en el comportamiento colectivo de animales como aves o peces para encontrar soluciones óptimas en problemas complejos.
-
-Primero, para hacer una intuición de esto podemos entender los siguientes 4 pasos:
+Primero, se realizaron los siguientes pasos para entender mejor el algoritmo:
 
 1) Las partículas y el espacio de búsqueda:
-  Imaginemos un tablero donde cada partícula tiene una posición (como coordenadas X y Y) y puede moverse en cualquier dirección, pero no puede salirse de los    bordes del tablero.
+  Imaginemos un tablero donde cada partícula tiene una posición y puede moverse en cualquier dirección, pero no puede salirse de los bordes del tablero.
 
 La función objetivo:
-  Hay una regla matemática (en este caso, la función Goldstein-Price) que, para cada posición del tablero, te dice qué tan “buena” es esa posición. El objetivo es encontrar la posición con el valor más bajo posible (el óptimo).
+  Hay una máquina que para cada posición del tablero, te dice qué tan “buena” es esa posición. El objetivo es encontrar la posición con el valor más bajo posible, el óptimo.
 
 2) Movimiento y aprendizaje:
   Cada partícula recuerda dos cosas:
@@ -51,17 +47,15 @@ La función objetivo:
   La mejor posición que ha encontrado todo el grupo.
   En cada paso, la partícula decide hacia dónde moverse usando:
 
-3) Su velocidad actual (como su impulso).
+3) Su velocidad actual.
   Un poco de “curiosidad” por volver a su mejor lugar.
   Un poco de “confianza” en seguir al mejor del grupo.
   Así, cada partícula ajusta su velocidad y se mueve, tratando de mejorar.
 
 4) El enjambre:
-  El grupo completo de partículas se llama “enjambre”. El enjambre se mueve durante varias rondas (iteraciones), y en cada ronda todas las partículas actualizan     su posición y velocidad, y se revisa si alguna encontró un lugar mejor.
+  El grupo completo de partículas se llama “enjambre”. El enjambre se mueve durante varias rondas, y en cada ronda todas las partículas actualizan su posición y velocidad, y se revisa si alguna encontró un lugar mejor.
 
 Ahora, la manera en la que esto sucede en el código es:
-
-
 
 ---
 
