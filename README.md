@@ -36,7 +36,7 @@ Utilizando las siguientes formulas:
 
 El código implementa el algoritmo de optimización por enjambre de partículas (PSO), que es una técnica inspirada en el comportamiento colectivo de animales como aves o peces para encontrar soluciones óptimas en problemas complejos.
 
-Clases principales:
+*Clases principales*:
 
 Particle:
 Representa una partícula individual del enjambre.
@@ -74,10 +74,10 @@ buscar_mejor_global(funcion): busca la mejor posición global entre todas las pa
 
 mostrar_enjambre(funcion, num_iteraciones, num_graficas): ejecuta el proceso de optimización, mostrando gráficamente la posición de las partículas en ciertas iteraciones.
 
-Función objetivo:
+*Función objetivo*:
 En este caso, goldstein_price(x, y): es la función matemática que el enjambre intenta minimizar a manera de prueba :)
 
-Ejecución principal:
+*Ejecución principal*:
 
 Se crea un enjambre de 20 partículas con posiciones aleatorias dentro de los límites [-2, 2].
 
