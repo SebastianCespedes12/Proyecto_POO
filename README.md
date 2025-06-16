@@ -77,24 +77,24 @@ Al final, se imprime el mejor valor encontrado y la posición correspondiente.
 Otra manera de ver esto, fuera del código es entender los siguientes 4 pasos:
 
 1) Las partículas y el espacio de búsqueda:
-Imaginemos un tablero donde cada partícula tiene una posición (como coordenadas X y Y) y puede moverse en cualquier dirección, pero no puede salirse de los bordes del tablero.
+  Imaginemos un tablero donde cada partícula tiene una posición (como coordenadas X y Y) y puede moverse en cualquier dirección, pero no puede salirse de los    bordes del tablero.
 
 La función objetivo:
-Hay una regla matemática (en este caso, la función Goldstein-Price) que, para cada posición del tablero, te dice qué tan “buena” es esa posición. El objetivo es encontrar la posición con el valor más bajo posible (el óptimo).
+  Hay una regla matemática (en este caso, la función Goldstein-Price) que, para cada posición del tablero, te dice qué tan “buena” es esa posición. El objetivo es encontrar la posición con el valor más bajo posible (el óptimo).
 
 2) Movimiento y aprendizaje:
-Cada partícula recuerda dos cosas:
+  Cada partícula recuerda dos cosas:
 
-La mejor posición que ha encontrado ella misma.
-La mejor posición que ha encontrado todo el grupo.
-En cada paso, la partícula decide hacia dónde moverse usando:
+  La mejor posición que ha encontrado ella misma.
+  La mejor posición que ha encontrado todo el grupo.
+  En cada paso, la partícula decide hacia dónde moverse usando:
 
 3) Su velocidad actual (como su impulso).
-Un poco de “curiosidad” por volver a su mejor lugar.
-Un poco de “confianza” en seguir al mejor del grupo.
-Así, cada partícula ajusta su velocidad y se mueve, tratando de mejorar.
+  Un poco de “curiosidad” por volver a su mejor lugar.
+  Un poco de “confianza” en seguir al mejor del grupo.
+  Así, cada partícula ajusta su velocidad y se mueve, tratando de mejorar.
 
 4) El enjambre:
-El grupo completo de partículas se llama “enjambre”. El enjambre se mueve durante varias rondas (iteraciones), y en cada ronda todas las partículas actualizan su posición y velocidad, y se revisa si alguna encontró un lugar mejor.
+  El grupo completo de partículas se llama “enjambre”. El enjambre se mueve durante varias rondas (iteraciones), y en cada ronda todas las partículas actualizan     su posición y velocidad, y se revisa si alguna encontró un lugar mejor.
 
 
