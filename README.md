@@ -61,7 +61,7 @@ La función objetivo:
 
 Ahora, la manera en la que esto sucede en el código es:
 
-Por supuesto, aquí tienes una explicación detallada del código, acompañada de bloques de código correspondientes para que puedas documentarlo en tu repositorio de GitHub:
+
 
 ---
 
