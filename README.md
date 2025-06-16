@@ -2,6 +2,12 @@
 ## Definición de alternativa
 Alternativa 3
 >Construir una aplicación que emule el algorimo PSO utilizando Python.
+### Integrantes
+
+* Sebastian Cespedes
+* Brayan Santiago Celi
+* Santiago Cely
+
 ## Diagrama de clases
 ```mermaid
 classDiagram
@@ -35,7 +41,8 @@ El algoritmo de optimización por enjambre de partículas (PSO),  es una técnic
 Primero, se realizaron los siguientes pasos para entender mejor el algoritmo:
 
 1) Las partículas y el espacio de búsqueda:
-  Imaginemos un tablero donde cada partícula tiene una posición y puede moverse en cualquier dirección, pero no puede salirse de los bordes del tablero.
+
+Imaginemos un tablero donde cada partícula tiene una posición y puede moverse en cualquier dirección, pero no puede salirse de los bordes del tablero.
 
 La función objetivo:
   Hay una máquina que para cada posición del tablero, te dice qué tan “buena” es esa posición. El objetivo es encontrar la posición con el valor más bajo posible, el óptimo.
