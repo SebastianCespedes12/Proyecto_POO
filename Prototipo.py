@@ -1,5 +1,7 @@
 from random import uniform
 from matplotlib import pyplot
+from numpy import linspace, meshgrid, log10
+
 
 class Particle:
     def __init__(self,posicion: list, funcion, limites: tuple):
@@ -54,30 +56,55 @@ class Swarm:
             if particula.buscar_mejor_local(funcion)[1] < self.mejor_val_global:
                 self.mejor_val_global = particula.buscar_mejor_local(funcion)[1]
                 self.mejor_pos_global = particula.buscar_mejor_local(funcion)[0].copy()
-                
+
     def mostrar_enjambre(self, funcion, num_iteraciones:int, num_graficas:int):
         for i in range(num_iteraciones + 1):
             self.buscar_mejor_global(funcion)
             if i in [(num_iteraciones//num_graficas)*i for i in range(num_graficas + 1)]:
+                # Crear la malla para la función de fondo
+                x = linspace(self.enjambre[0].limites[0], self.enjambre[0].limites[1], 100)
+                y = linspace(self.enjambre[0].limites[0], self.enjambre[0].limites[1], 100)
+                X, Y = meshgrid(x, y)
+                Z = funcion(X, Y)
+                
+                # Graficar la función como contorno de fondo
+                Z_log = log10(Z)
+                
+                # Graficar la función como contorno de fondo con escala logarítmica
+                im = pyplot.imshow(Z_log, extent=[self.enjambre[0].limites[0], self.enjambre[0].limites[1], 
+                                self.enjambre[0].limites[0], self.enjambre[0].limites[1]], 
+                            origin='lower', cmap='viridis', vmin=0, vmax=6)
+                
+                # Agregar líneas de contorno
+                Q = pyplot.contour(X, Y, Z_log, levels=15, colors='white', alpha=0.7, linewidths=1)
+                
+                #Colorbar con etiquetas logarítmicas
+                cbar = pyplot.colorbar(im)
+                cbar.set_label("Escala logaritmica")
+
+                # Graficar las partículas encima
                 for particula in self.enjambre:
-                    pyplot.plot(*particula.posicion, "o")
+                    pyplot.plot(*particula.posicion, "ro", markersize=8)
                     pyplot.title(f"Iteracion {i}")
+                    
+                pyplot.xlabel('x')
+                pyplot.ylabel('y')
                 pyplot.show()
-            prueba.cambiar_velocidades()
+            self.cambiar_velocidades()
 
 def goldstein_price(x, y):
     term1 = 1 + (x + y + 1)**2 * (19 - 14*x + 3*x**2 - 14*y + 6*x*y + 3*y**2)
     term2 = 30 + (2*x - 3*y)**2 * (18 - 32*x + 12*x**2 + 48*y - 36*x*y + 27*y**2)
     return term1 * term2
-    
+
 if __name__ == "__main__":
     enjambre = []
     for i in range(20):
-        limites_prueba = (-2,2)
-        posicion_prueba = [uniform(-2.0, 2.0), uniform(-2.0, 2.0)]
+        limites_prueba = (-2, 2)
+        posicion_prueba = [uniform(limites_prueba[0], limites_prueba[1]), uniform(limites_prueba[0], limites_prueba[1])]
         particula = Particle(posicion_prueba, goldstein_price, limites_prueba)
         enjambre.append(particula)
-
+ 
     prueba = Swarm(enjambre)
     prueba.mostrar_enjambre(goldstein_price, 200, 4)
     print(f"Optimizacion: {prueba.mejor_val_global:.3f},\nPosicion:", end=" ")
