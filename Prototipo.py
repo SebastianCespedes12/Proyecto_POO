@@ -65,7 +65,7 @@ class Swarm:
                 x = linspace(self.enjambre[0].limites[0], self.enjambre[0].limites[1], 100)
                 y = linspace(self.enjambre[0].limites[0], self.enjambre[0].limites[1], 100)
                 X, Y = meshgrid(x, y)
-                Z = funcion(X, Y)
+                Z = funcion(X, Y)   
                 
                 # Graficar la función como contorno de fondo
                 Z_log = log10(Z)
