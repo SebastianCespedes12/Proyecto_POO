@@ -1,7 +1,8 @@
 from random import uniform
+from numpy import linspace, meshgrid, log10
+
 from collections.abc import Callable
 from matplotlib import pyplot
-from numpy import linspace, meshgrid, log10
 
 
 class Particle:
@@ -53,15 +54,15 @@ class Swarm:
             particula.cambiar_velocidad(self.coeficiente_inercia, self.parametro_cognitivo, self.parametro_social, self.mejor_pos_global)
             particula.mover()
     
-    def buscar_mejor_global(self, funcion):
+    def buscar_mejor_global(self):
         for particula in self.enjambre:
-            if particula.buscar_mejor_local(funcion)[1] < self.mejor_val_global:
-                self.mejor_val_global = particula.buscar_mejor_local(funcion)[1]
-                self.mejor_pos_global = particula.buscar_mejor_local(funcion)[0].copy()
+            if particula.buscar_mejor_local()[1] < self.mejor_val_global:
+                self.mejor_val_global = particula.buscar_mejor_local()[1]
+                self.mejor_pos_global = particula.buscar_mejor_local()[0].copy()
 
     def mostrar_enjambre2d(self, funcion, num_iteraciones:int, num_graficas:int):
         for i in range(num_iteraciones + 1):
-            self.buscar_mejor_global(funcion)
+            self.buscar_mejor_global()
             if i in [(num_iteraciones//num_graficas)*i for i in range(num_graficas + 1)]:
                 # Crear la malla para la función de fondo
                 x = linspace(self.enjambre[0].limites[0], self.enjambre[0].limites[1], 100)
@@ -95,7 +96,7 @@ class Swarm:
 
     def mostrar_enjambre3d(self, funcion, num_iteraciones:int, num_graficas:int):
         for i in range(num_iteraciones + 1):
-            self.buscar_mejor_global(funcion)
+            self.buscar_mejor_global()
             if i in [(num_iteraciones//num_graficas)*i for i in range(num_graficas + 1)]:
                 x = linspace(self.enjambre[0].limites[0], self.enjambre[0].limites[1], 100)
                 y = linspace(self.enjambre[0].limites[0], self.enjambre[0].limites[1], 100)
@@ -139,5 +140,6 @@ if __name__ == "__main__":
     enjambre = crear_enjambre(20, limites_prueba, goldstein_price)
     prueba = Swarm(enjambre)
     prueba.mostrar_enjambre2d(goldstein_price, 200, 4)
+    prueba.mostrar_enjambre3d(goldstein_price, 200, 4)
     print(f"Optimizacion: {prueba.mejor_val_global:.3f},\nPosicion:", end=" ")
     print([f"{i:.3f}" for i in prueba.mejor_pos_global])
