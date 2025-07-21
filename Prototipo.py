@@ -13,6 +13,22 @@ from funciones import dic_funciones, nombres_funciones, get_funcion, get_limites
 
 
 class Particle:
+    """
+    Particle:
+        Representa una partícula individual en el algoritmo PSO.
+        Atributos:
+            posicion: Lista con las coordenadas actuales de la partícula
+            limites: Tupla con los límites del espacio de búsqueda
+            funcion: Función objetivo a optimizar
+            velocidad: Velocidad actual de la partícula
+            mejor_pos_local: Mejor posición encontrada por esta partícula
+            mejor_val_local: Mejor valor encontrado por esta partícula
+        
+        Métodos:
+            mover(): Actualiza la posición de la partícula según su velocidad
+            buscar_mejor_local(): Actualiza el mejor local si la posición actual es mejor
+            cambiar_velocidad(): Ajusta la velocidad según factores cognitivos y sociales
+        """
     def __init__(self, limites: tuple, posicion: list, funcion: Callable):
         self.posicion = posicion
         self.limites = limites
@@ -48,6 +64,21 @@ class Particle:
         self.velocidad = nueva_velocidad
 
 class Swarm:
+    """
+    Swarm:
+        Representa el enjambre completo de partículas y coordina el algoritmo PSO.
+        Atributos:
+            enjambre: Lista de varios objetos denominados Particle
+            mejor_pos_global: Mejor posición encontrada por todo el enjambre
+            mejor_val_global: Mejor valor encontrado por todo el enjambre
+            coeficiente_inercia: Factor de inercia para el cálculo de velocidad
+            parametro_cognitivo: Factor cognitivo para el cálculo de velocidad
+            parametro_social: Factor social para el cálculo de velocidad
+        
+        Métodos:
+            cambiar_velocidades(): Actualiza velocidades de todas las partículas
+            buscar_mejor_global(): Encuentra la mejor solución global del enjambre
+    """
     def __init__(self, enjambre: list[Particle], coeficiente_inercia = 0.7, parametro_cognitivo =2, parametro_social = 2): 
         self.enjambre = enjambre
         self.mejor_pos_global = []
@@ -68,6 +99,24 @@ class Swarm:
                 self.mejor_pos_global = particula.buscar_mejor_local()[0].copy()
 
 class OptimizationGUI:
+    """
+        OptimizationGUI:
+        Interfaz gráfica para visualizar y controlar el algoritmo PSO.
+        Atributos:
+            root: Ventana principal de Tkinter
+            swarm: Objeto Swarm actual
+            is_animating: Estado de la animación
+            
+        Métodos principales:
+            __init__(): Inicializa la interfaz gráfica
+            setup_ui(): Configura los elementos visuales de la GUI
+            setup_pso_controls(): Crea los controles para configurar PSO
+            animate_pso(): Maneja el inicio/detención de la animación
+            mostrar_enjambre_2d(): Visualización 2D del proceso PSO
+            mostrar_enjambre_3d(): Visualización 3D del proceso PSO
+            termina_animacion(): Procesa los resultados finales
+            mostrar_grafica_final(): Muestra el resultado final de la optimización por medio de la grafica seleccionada
+    """
     def __init__(self, root):
         self.root = root
         self.root.title('PSO Animado - Prototipo')
@@ -378,7 +427,16 @@ class OptimizationGUI:
 
 def crear_enjambre(num_particulas: int, limites: tuple, funcion: Callable):
         return [Particle(limites, [uniform(limites[0], limites[1]), uniform(limites[0], limites[1])], funcion) for i in range(num_particulas+1)]
-
+"""
+ crear_enjambre(num_particulas, limites, funcion):
+        Crea un enjambre de partículas con posiciones aleatorias.
+        Args:
+            num_particulas: Número de partículas a crear
+            limites: Tupla con los límites del espacio de búsqueda
+            funcion: Función objetivo a optimizar
+        Returns:
+            Lista de objetos Particle inicializados aleatoriamente
+"""
 if __name__ == "__main__":
         # Modo GUI
         root = tk.Tk()
