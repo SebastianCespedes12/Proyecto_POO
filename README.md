@@ -494,9 +494,11 @@ Esta función utilitaria crea un enjambre de partículas con posiciones iniciale
 ### 15. Ejecución principal con GUI
 
 ````python
+from PSO import OptimizationGUI, crear_root
+ 
 if __name__ == "__main__":
-    # Modo GUI
-    root = tk.Tk()
+    # Se inicializa la raíz de la GUI y se corre la aplicación
+    root = crear_root()
     app = OptimizationGUI(root)
     root.mainloop()
 ````
