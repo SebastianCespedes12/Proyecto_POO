@@ -246,69 +246,281 @@ Este método recorre todas las partículas del enjambre, actualiza su velocidad 
 ### 7. Búsqueda de la mejor posición global
 
 ````python
-    def buscar_mejor_global(self, funcion):
+    def buscar_mejor_global(self):
         for particula in self.enjambre:
-            if particula.buscar_mejor_local(funcion)[1] < self.mejor_val_global:
-                self.mejor_val_global = particula.buscar_mejor_local(funcion)[1]
-                self.mejor_pos_global = particula.buscar_mejor_local(funcion)[0].copy()
+            if particula.buscar_mejor_local()[1] < self.mejor_val_global:
+                self.mejor_val_global = particula.buscar_mejor_local()[1]
+                self.mejor_pos_global = particula.buscar_mejor_local()[0].copy()
 ````
 
 **Explicación:**  
-Este método revisa todas las partículas para encontrar la mejor posición global (la de menor valor de la función objetivo) y la actualiza si alguna partícula encuentra una mejor.
+Este método revisa todas las partículas para encontrar la mejor posición global (la de menor valor de la función objetivo) y la actualiza si alguna partícula encuentra una mejor. Ahora no necesita la función como parámetro ya que cada partícula ya tiene su función objetivo.
 
 ---
 
-### 8. Visualización del enjambre durante la optimización
+### 8. Interfaz Gráfica para Optimización PSO
 
 ````python
-    def mostrar_enjambre(self, funcion, num_iteraciones:int, num_graficas:int):
+class OptimizationGUI:
+    def __init__(self, root):
+        self.root = root
+        self.root.title('PSO Animado - Prototipo')
+        self.root.geometry('1000x800')
+        
+        # Variables de estado
+        self.swarm = None
+        self.is_animating = False
+        
+        # Variables de GUI - PSO
+        self.pso_function_var = tk.StringVar(value="Goldstein-Price")
+        self.num_particles_var = tk.IntVar(value=20)
+        self.num_iterations_var = tk.IntVar(value=100)
+        self.inertia_var = tk.DoubleVar(value=0.7)
+        self.cognitive_var = tk.DoubleVar(value=2.0)
+        self.social_var = tk.DoubleVar(value=2.0)
+        self.viz_type_var = tk.StringVar(value="2D")
+        self.escala_log_var = tk.BooleanVar(value=True)
+````
+
+**Explicación:**  
+La clase `OptimizationGUI` proporciona una interfaz gráfica completa para controlar y visualizar el algoritmo PSO. Incluye variables para configurar todos los parámetros del algoritmo y controlar el estado de la animación.
+
+---
+
+### 9. Configuración de controles PSO
+
+````python
+    def setup_pso_controls(self, parent):
+        # Selector de función
+        ttk.Label(parent, text="Función:").grid(row=0, column=0)
+        self.pso_function_combo = ttk.Combobox(parent, textvariable=self.pso_function_var, 
+                                              values=nombres_funciones(), state="readonly")
+        
+        # Parámetros básicos
+        ttk.Label(parent, text="Partículas:").grid(row=1, column=0)
+        ttk.Spinbox(parent, from_=5, to=100, textvariable=self.num_particles_var, width=8)
+        
+        # Parámetros PSO avanzados
+        ttk.Label(parent, text="Inercia:").grid(row=2, column=0)
+        ttk.Spinbox(parent, from_=0.1, to=2.0, increment=0.1, textvariable=self.inertia_var)
+        
+        ttk.Label(parent, text="Cognitivo:").grid(row=2, column=2)
+        ttk.Spinbox(parent, from_=0.5, to=5.0, increment=0.1, textvariable=self.cognitive_var)
+        
+        ttk.Label(parent, text="Social:").grid(row=2, column=4)
+        ttk.Spinbox(parent, from_=0.5, to=5.0, increment=0.1, textvariable=self.social_var)
+````
+
+**Explicación:**  
+Este método crea todos los controles de la interfaz permitiendo al usuario configurar la función objetivo, número de partículas, iteraciones y los tres parámetros fundamentales del PSO: inercia, cognitivo y social.
+
+---
+
+### 10. Animación PSO con visualización 2D
+
+````python
+    def mostrar_enjambre_2d(self, funcion, num_iteraciones, escala_log=True):
+        # Crear la malla para la función de fondo
+        x = linspace(self.swarm.enjambre[0].limites[0], self.swarm.enjambre[0].limites[1], 100)
+        y = linspace(self.swarm.enjambre[0].limites[0], self.swarm.enjambre[0].limites[1], 100)
+        X, Y = meshgrid(x, y)
+        Z = funcion(X, Y)   
+        
+        # Decidir escala (logarítmica o normal)
+        if escala_log:
+            Z_plot = log10(Z)
+            label_escala = "Escala logarítmica"
+        else:
+            Z_plot = Z
+            label_escala = "Escala normal"
+        
+        # Bucle de animación
         for i in range(num_iteraciones + 1):
-            self.buscar_mejor_global(funcion)
-            if i in [(num_iteraciones//num_graficas)*i for i in range(num_graficas + 1)]:
-                for particula in self.enjambre:
-                    pyplot.plot(*particula.posicion, "o")
-                    pyplot.title(f"Iteracion {i}")
-                pyplot.show()
-            prueba.cambiar_velocidades()
+            if not self.is_animating:
+                break
+                
+            self.swarm.buscar_mejor_global()
+            
+            if i % 3 == 0:  # Actualizar cada 3 iteraciones
+                self.pso_figure.clear()
+                ax = self.pso_figure.add_subplot(111)
+                
+                # Dibujar el fondo con contornos
+                im = ax.imshow(Z_plot, extent=[...], origin='lower', cmap='viridis')
+                ax.contour(X, Y, Z_plot, levels=15, colors='white', alpha=0.7)
+                
+                # Dibujar partículas
+                for particula in self.swarm.enjambre:
+                    ax.plot(*particula.posicion, "ro", markersize=6)
+                
+                ax.set_title(f"Iteración {i} - Mejor: {self.swarm.mejor_val_global:.6f}")
+                self.pso_canvas.draw()
+                self.root.update()
+                
+            self.swarm.cambiar_velocidades()
 ````
 
 **Explicación:**  
-Este método ejecuta el proceso de optimización durante un número determinado de iteraciones y muestra gráficamente la posición de las partículas en ciertos puntos del proceso.
+Este método ejecuta la animación 2D del algoritmo PSO. Crea una visualización en tiempo real donde se puede observar el movimiento de las partículas sobre el paisaje de la función objetivo, actualizando la gráfica cada 3 iteraciones para mantener fluidez.
 
 ---
 
-### 9. Función objetivo
+### 11. Animación PSO con visualización 3D
 
 ````python
-def goldstein_price(x, y):
-    term1 = 1 + (x + y + 1)**2 * (19 - 14*x + 3*x**2 - 14*y + 6*x*y + 3*y**2)
-    term2 = 30 + (2*x - 3*y)**2 * (18 - 32*x + 12*x**2 + 48*y - 36*x*y + 27*y**2)
-    return term1 * term2
+    def mostrar_enjambre_3d(self, funcion, num_iteraciones, escala_log=True):
+        # Crear malla 3D
+        x = linspace(self.swarm.enjambre[0].limites[0], self.swarm.enjambre[0].limites[1], 100)
+        y = linspace(self.swarm.enjambre[0].limites[0], self.swarm.enjambre[0].limites[1], 100)
+        X, Y = meshgrid(x, y)
+        Z = funcion(X, Y)   
+        
+        # Determinar escala de visualización
+        if escala_log and (Z > 0).all():
+            Z_plot = log10(Z)
+            titulo_base = "Escala logarítmica"
+        else:
+            Z_plot = Z
+            titulo_base = "Escala normal"
+        
+        # Bucle de animación 3D
+        for i in range(num_iteraciones + 1):
+            if not self.is_animating:
+                break
+                
+            self.swarm.buscar_mejor_global()
+            
+            if i % 5 == 0:  # Actualizar cada 5 iteraciones para 3D
+                self.pso_figure.clear()
+                ax = self.pso_figure.add_subplot(111, projection='3d')
+                
+                # Superficie 3D
+                suprf = ax.plot_surface(X, Y, Z_plot, cmap="viridis", alpha=0.7)
+                
+                # Partículas en 3D
+                for particula in self.swarm.enjambre:
+                    parte_x, parte_y = particula.posicion
+                    parte_z = log10(funcion(parte_x, parte_y)) if escala_log else funcion(parte_x, parte_y)
+                    ax.scatter([parte_x], [parte_y], [parte_z], color='red', s=80)
+                
+                ax.set_title(f'{titulo_base} - Iteración {i}\nMejor: {self.swarm.mejor_val_global:.6f}')
+                self.pso_canvas.draw()
+                self.root.update()
+                
+            self.swarm.cambiar_velocidades()
 ````
 
 **Explicación:**  
-Esta es la función matemática que el enjambre intenta minimizar. Es una función estándar de prueba en optimización.
+La visualización 3D muestra la superficie completa de la función objetivo con las partículas moviéndose sobre ella. Se actualiza cada 5 iteraciones para mantener un rendimiento adecuado, permitiendo observar cómo las partículas navegan por el espacio tridimensional.
 
 ---
 
-### 10. Ejecución principal
+### 12. Control de animación
+
+````python
+    def animate_pso(self):
+        if self.is_animating:
+            self.is_animating = False
+            self.animate_button.config(text="Iniciar Animación PSO")
+            return
+            
+        self.is_animating = True
+        self.animate_button.config(text="Detener Animación")
+        
+        # Obtener parámetros de la GUI
+        function_name = self.pso_function_var.get()
+        funcion = get_funcion(function_name)
+        num_particles = self.num_particles_var.get()
+        num_iterations = self.num_iterations_var.get()
+        limites = get_limites(function_name)
+        
+        # Parámetros PSO personalizados
+        inertia = self.inertia_var.get()
+        cognitivo = self.cognitive_var.get()
+        social = self.social_var.get()
+        
+        # Crear enjambre con parámetros configurados
+        enjambre = crear_enjambre(num_particles, limites, funcion)
+        self.swarm = Swarm(enjambre, inertia, cognitivo, social)
+        
+        # Iniciar visualización según tipo seleccionado
+        viz_type = self.viz_type_var.get()
+        if viz_type == "2D":
+            self.mostrar_enjambre_2d(funcion, num_iterations, self.escala_log_var.get())
+        else:
+            self.mostrar_enjambre_3d(funcion, num_iterations, self.escala_log_var.get())
+````
+
+**Explicación:**  
+Este método maneja el inicio y detención de la animación. Extrae todos los parámetros configurados por el usuario desde la interfaz gráfica, crea un nuevo enjambre con esos parámetros y lanza la visualización correspondiente (2D o 3D).
+
+---
+
+### 13. Finalización de animación
+
+````python
+    def termina_animacion(self, funcion, Z_plot, X, Y, escala_log, viz_type, label_escala):
+        self.is_animating = False
+        self.animate_button.config(text="Iniciar Animación PSO")
+        
+        function_name = self.pso_function_var.get()
+        
+        # Mostrar resultados finales
+        if self.swarm.mejor_pos_global:
+            resultado = f"Función: {function_name}\n"
+            resultado += f"Mejor valor: {self.swarm.mejor_val_global:.6f}\n"
+            resultado += f"Mejor posición: [{self.swarm.mejor_pos_global[0]:.6f}, {self.swarm.mejor_pos_global[1]:.6f}]\n"
+            resultado += f"Visualización: {viz_type}"
+            
+            self.results_text.delete(1.0, tk.END)
+            self.results_text.insert(1.0, resultado)
+            
+            # Mostrar gráfico final
+            self.mostrar_grafica_final(funcion, Z_plot, X, Y, escala_log, viz_type, label_escala)
+````
+
+**Explicación:**  
+Este método se ejecuta cuando termina la animación. Detiene la animación, actualiza el botón y muestra los resultados finales en el área de texto, incluyendo la mejor posición y valor encontrados.
+
+---
+
+### 14. Creación del enjambre
+
+````python
+def crear_enjambre(num_particulas: int, limites: tuple, funcion: Callable):
+    return [Particle(
+                limites, 
+                [uniform(limites[0], limites[1]), 
+                 uniform(limites[0], limites[1])], funcion) 
+            for i in range(num_particulas)]
+````
+
+**Explicación:**  
+Esta función utilitaria crea un enjambre de partículas con posiciones iniciales aleatorias dentro de los límites especificados. Cada partícula se inicializa con la función objetivo correspondiente.
+
+---
+
+### 15. Ejecución principal con GUI
 
 ````python
 if __name__ == "__main__":
-    enjambre = []
-    for i in range(20):
-        limites_prueba = (-2,2)
-        posicion_prueba = [uniform(-2.0, 2.0), uniform(-2.0, 2.0)]
-        particula = Particle(posicion_prueba, goldstein_price, limites_prueba)
-        enjambre.append(particula)
-
-    prueba = Swarm(enjambre)
-    prueba.mostrar_enjambre(goldstein_price, 200, 4)
-    print(f"Optimizacion: {prueba.mejor_val_global:.3f},\nPosicion:", end=" ")
-    print([f"{i:.3f}" for i in prueba.mejor_pos_global])
+    # Modo GUI
+    root = tk.Tk()
+    app = OptimizationGUI(root)
+    root.mainloop()
 ````
 
 **Explicación:**  
-Aquí se crea un enjambre de 20 partículas con posiciones aleatorias, se instancia el enjambre, se ejecuta la optimización y se muestran los resultados finales.
+El programa se ejecuta creando una ventana principal de tkinter y instanciando la clase OptimizationGUI. Esto proporciona una interfaz completa donde el usuario puede:
+
+- Seleccionar diferentes funciones de optimización
+- Configurar parámetros PSO (inercia, cognitivo, social)
+- Elegir número de partículas e iteraciones
+- Alternar entre visualización 2D y 3D
+- Controlar la escala logarítmica
+- Iniciar/detener la animación en tiempo real
+- Ver los resultados finales de optimización
+
+La GUI integra toda la funcionalidad del algoritmo PSO en una interfaz intuitiva y visualmente atractiva.
 
 ---
