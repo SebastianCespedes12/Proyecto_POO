@@ -517,3 +517,11 @@ El programa se ejecuta creando una ventana principal de tkinter y instanciando l
 La GUI integra toda la funcionalidad del algoritmo PSO en una interfaz intuitiva y visualmente atractiva.
 
 ---
+
+## Requisitos de instalacion
+Se utilizan las librerias externas matplotlib.
+consultar: https://matplotlib.org/stable/install/index.html 
+o
+´´´
+pip install matplotlib
+´´´
