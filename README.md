@@ -8,7 +8,7 @@ Alternativa 3
 * Brayan Santiago Celi
 * Santiago Cely
 
-## Diagrama de clases
+## Diagrama de clases inicial
 ```mermaid
 classDiagram
     class Swarm {
@@ -35,6 +35,78 @@ classDiagram
     }
     
     Swarm --* Particle
+```
+
+## Diagrama de clases con GUI
+```mermaid
+classDiagram
+    class Particle {
+        - posicion: list
+        - limites: tuple
+        - funcion: Callable
+        - velocidad: list
+        - mejor_pos_local: list
+        - mejor_val_local: float
+        + __init__(limites, posicion, funcion)
+        + mover()
+        + buscar_mejor_local() tuple
+        + cambiar_velocidad(coeficiente_inercia, parametro_cognitivo, parametro_social, mejor_pos_global)
+    }
+    
+    class Swarm {
+        - enjambre: list~Particle~
+        - mejor_pos_global: list
+        - mejor_val_global: float
+        - coeficiente_inercia: float
+        - parametro_cognitivo: float
+        - parametro_social: float
+        + __init__(enjambre, coeficiente_inercia, parametro_cognitivo, parametro_social)
+        + cambiar_velocidades()
+        + buscar_mejor_global()
+    }
+    
+    class OptimizationGUI {
+        - root: tk.Tk
+        - swarm: Swarm
+        - is_animating: bool
+        - pso_function_var: tk.StringVar
+        - num_particles_var: tk.IntVar
+        - num_iterations_var: tk.IntVar
+        - inertia_var: tk.DoubleVar
+        - cognitive_var: tk.DoubleVar
+        - social_var: tk.DoubleVar
+        - viz_type_var: tk.StringVar
+        - escala_log_var: tk.BooleanVar
+        - pso_function_combo: ttk.Combobox
+        - escala_log_check: ttk.Checkbutton
+        - viz_type_combo: ttk.Combobox
+        - animate_button: ttk.Button
+        - results_text: tk.Text
+        - pso_figure: Figure
+        - pso_canvas: FigureCanvasTkAgg
+        + __init__(root)
+        + setup_ui()
+        + setup_pso_controls(parent)
+        + animate_pso()
+        + mostrar_enjambre_2d(funcion, num_iteraciones, escala_log)
+        + mostrar_enjambre_3d(funcion, num_iteraciones, escala_log)
+        + termina_animacion(funcion, Z_plot, X, Y, escala_log, viz_type, label_escala)
+        + mostrar_grafica_final(funcion, Z_plot, X, Y, escala_log, viz_type, label_escala)
+    }
+    
+    class FuncionModule {
+        <<external>>
+        + nombres_funciones() list
+        + get_funcion(name) Callable
+        + get_limites(name) tuple
+    }
+    
+    %% Relaciones
+    Swarm --* Particle : 
+    OptimizationGUI --> Swarm : "crea"
+    OptimizationGUI --> FuncionModule : "usa"
+    
+
 ```
 El algoritmo de optimización por enjambre de partículas (PSO),  es una técnica inspirada en el comportamiento colectivo de animales como aves o peces para encontrar soluciones óptimas en problemas complejos.
 
