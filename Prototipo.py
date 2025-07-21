@@ -1,15 +1,14 @@
-import tkinter as tk
-from tkinter import ttk
 from random import uniform
-from collections.abc import Callable
 from time import sleep
 
-from numpy import linspace, meshgrid, log10
-from matplotlib.figure import Figure
+import tkinter as tk
+from tkinter import ttk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib import pyplot
+from matplotlib.figure import Figure
+from numpy import linspace, meshgrid, log10
 
-from funciones import dic_funciones, nombres_funciones, get_funcion, get_limites
+from collections.abc import Callable
+from funciones import nombres_funciones, get_funcion, get_limites
 
 
 class Particle:
@@ -175,7 +174,16 @@ class OptimizationGUI:
         self.pso_canvas.get_tk_widget().pack()
         
     def setup_pso_controls(self, parent):
-        # fila 0: Función y límites
+        """
+        Configura los controles de la interfaz para el algoritmo PSO.
+        Crea los widgets:
+        - Selector de función
+        - Parámetros PSO (número de partículas, iteraciones, coeficientes)
+        - Tipo de visualización (2D/3D)
+        - Checkbox para escala logarítmica
+        - Botón para iniciar/detener la animación
+        """
+        # fila 0: Función 
         ttk.Label(parent, text="Función:").grid(row=0, column=0)
         self.pso_function_combo = ttk.Combobox(parent, textvariable=self.pso_function_var, values=nombres_funciones(), state="readonly")
         self.pso_function_combo.grid(row=0, column=1)
@@ -212,6 +220,12 @@ class OptimizationGUI:
   
     
     def animate_pso(self):
+        """
+        Maneja el inicio/detención de la animación del algoritmo PSO.
+        Si la animación está activa, la detiene y actualiza el botón.
+        Si no está activa, inicia la animación con los parámetros actuales.
+        Extrae los parámetros de la interfaz y crea el enjambre.
+        """
         if self.is_animating:
             self.is_animating = False
             self.animate_button.config(text="Iniciar Animación PSO")
@@ -238,7 +252,7 @@ class OptimizationGUI:
         enjambre = crear_enjambre(num_particles, limites, funcion)
         self.swarm = Swarm(enjambre, inertia, cognitivo, social)
         
-        # Usar los métodos existentes de Swarm adaptados para GUI
+        # Usar los métodos de visualización adaptados
         if viz_type == "2D":
             self.mostrar_enjambre_2d(funcion, num_iterations, use_escala_log)
         else:
@@ -252,7 +266,7 @@ class OptimizationGUI:
         Z = funcion(X, Y)   
         
         # Decidir qué escala usar
-        if escala_log and (Z > 0).all():
+        if escala_log:
             Z_plot = log10(Z)
             label_escala = "Escala logarítmica"
             vmin, vmax = 0, 6
@@ -446,9 +460,3 @@ if __name__ == "__main__":
         root = tk.Tk()
         app = OptimizationGUI(root)
         root.mainloop()
-
-    #     Modo consola original
-    #     limites_prueba = (-2, 2)
-    #     enjambre = crear_enjambre(20, limites_prueba, goldstein_price)
-    #     prueba = Swarm(enjambre)
-        
