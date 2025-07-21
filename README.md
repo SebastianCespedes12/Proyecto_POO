@@ -94,18 +94,9 @@ classDiagram
         + mostrar_grafica_final(funcion, Z_plot, X, Y, escala_log, viz_type, label_escala)
     }
     
-    class FuncionModule {
-        <<external>>
-        + nombres_funciones() list
-        + get_funcion(name) Callable
-        + get_limites(name) tuple
-    }
-    
-    %% Relaciones
-    Swarm --* Particle : 
-    OptimizationGUI --> Swarm : "crea"
-    OptimizationGUI --> FuncionModule : "usa"
-    
+    Swarm --* Particle 
+    OptimizationGUI --* Swarm : 
+
 
 ```
 El algoritmo de optimización por enjambre de partículas (PSO),  es una técnica inspirada en el comportamiento colectivo de animales como aves o peces para encontrar soluciones óptimas en problemas complejos.
