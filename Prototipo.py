@@ -1,14 +1,14 @@
 import tkinter as tk
 from tkinter import ttk
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib.figure import Figure
+from random import uniform
+from collections.abc import Callable
 from time import sleep
 
-from random import uniform
 from numpy import linspace, meshgrid, log10
-
-from collections.abc import Callable
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib import pyplot
+
 from funciones import dic_funciones, nombres_funciones, get_funcion, get_limites
 
 
@@ -426,7 +426,11 @@ class OptimizationGUI:
 
 
 def crear_enjambre(num_particulas: int, limites: tuple, funcion: Callable):
-        return [Particle(limites, [uniform(limites[0], limites[1]), uniform(limites[0], limites[1])], funcion) for i in range(num_particulas+1)]
+        return [Particle(
+                    limites, 
+                    [uniform(limites[0], limites[1]), 
+                     uniform(limites[0], limites[1])], funcion) 
+                for i in range(num_particulas+1)]
 """
  crear_enjambre(num_particulas, limites, funcion):
         Crea un enjambre de partículas con posiciones aleatorias.
